@@ -1,0 +1,10 @@
+body {
+  cursor: url(/hand.png);
+}
+
+.mouse {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background-image: url(/other-hand.png);
+}

@@ -1,1 +1,58 @@
-hey
+<html>
+  <head>
+    <title>Fridge</title>
+    <link rel="stylesheet" href="/style.css" type="text/css" />
+    <script src="/jquery-1.4.2.min.js" type="text/javascript"></script>
+  </head>
+  <body>
+    hey
+    <script type="text/javascript">
+      var conn;
+      function ratelimit(fn, ms) {
+        var last = (new Date()).getTime();
+        return (function() {
+          var now = (new Date()).getTime();
+          if (now - last > ms) {
+            last = now;
+            fn.apply(null, arguments);
+          }
+        });
+      }
+      $(function() {
+        if (window["WebSocket"]) {
+          conn = new WebSocket("ws://localhost:37223");
+          conn.onmessage = function(evt) {
+            data = JSON.parse(evt.data);
+            div = $('#mouse-'+data.id);
+            if (data.action == 'close') {
+              div.remove();
+            }
+            else if (data.action == "move") {
+              if (div.length == 0) {
+                div = $('<div id="mouse-'+data.id+'" class="mouse"></div>');
+                $('body').append(div);
+              }
+              div.css({
+                left: (($(window).width() - data.w) / 2 + data.x) + 'px',
+                top: data.y + 'px'
+              });
+            }
+          };
+        }
+      });
+      $(document).mousemove(
+        ratelimit(function(e) {
+          if (conn) {
+            conn.send(JSON.stringify({
+              'action': 'move',
+              'x': e.pageX,
+              'y': e.pageY,
+              'w': $(window).width(),
+              'h': $(window).height()
+            }));
+          }
+        }, 40)
+      );
+    </script>
+  </body>
+</html>
