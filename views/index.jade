@@ -1,0 +1,20 @@
+!!! 5
+html(lang='en')
+  head
+    meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
+    title Fridge
+    link(rel='stylesheet', type='text/css', href='/style.css')
+    script(type='text/javascript', src='/jquery-1.4.2.min.js')
+    script(type='text/javascript', src='/jquery-ui-1.8.2.custom.min.js')
+    script(type='text/javascript', src='/fridge.js')
+  body
+    div#main
+      div#fridge
+        - each magnet in magnets
+          != magnet.div()
+    :javascript
+      | $(function() {
+      |   if (window["WebSocket"]) {
+      |     $('#fridge').fridge({ host: "#{host}" });
+      |   }
+      | });
