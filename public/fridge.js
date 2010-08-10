@@ -105,8 +105,9 @@ $.magnet = function(parent, attribs) {
 };
 $.magnet.prototype = {
   startDrag: function() {
-    this.rect.attr({fill: 'green'});
-    this.word.attr({fill: 'white'});
+    if (!this.draggable) return;
+    this.rect.attr({fill: 'green', opacity: 0.9}).toFront();
+    this.word.attr({fill: 'white', opacity: 0.9}).toFront();
     this.lastTime = (new Date()).getTime();
 
     var bbox = this.set.getBBox();
@@ -122,6 +123,7 @@ $.magnet.prototype = {
     }));
   },
   drag: function(dx, dy) {
+    if (!this.draggable) return;
     this.set.translate(dx - this.dx, dy - this.dy);
     this.dx = dx;
     this.dy = dy;
@@ -138,8 +140,9 @@ $.magnet.prototype = {
     }
   },
   endDrag: function() {
-    this.rect.attr({fill: 'white'});
-    this.word.attr({fill: 'black'});
+    if (!this.draggable) return;
+    this.rect.attr({fill: 'white', opacity: 1});
+    this.word.attr({fill: 'black', opacity: 1});
 
     var bbox = this.set.getBBox();
     this.parent.conn.send(JSON.stringify({
@@ -166,8 +169,8 @@ $.magnet.prototype = {
     var callback = undefined;
     if (action == 'dragstart') {
       this.draggable = false;
-      this.rect.attr({fill: 'red'});
-      this.word.attr({fill: 'white'});
+      this.rect.attr({fill: 'red'}).toFront();
+      this.word.attr({fill: 'white'}).toFront();
     }
     else if (action == 'dragstop') {
       var self = this;
